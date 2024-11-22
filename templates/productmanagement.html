@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Manager</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="d-flex">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light flex-column">
+            <a class="navbar-brand" href="#">Admin</a>
+            <ul class="navbar-nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">User Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('addproduct') }}">Add Product</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('productmanagement') }}">Product Manager</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="container mt-5">
+            <h2>Product Manager</h2>
+            
+            <!-- Thông báo -->
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success">
+                {{ messages[0] }}
+                </div>
+            {% endif %}
+            {% endwith %}
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sr</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Count</th>
+                        <th>Brand</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.sr }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>${{ product.price }}</td>
+                        <td>{{ product.discount }}</td>
+                        <td>{{ product.count }}</td>
+                        <td>{{ product.brand }}</td>
+                        <td><img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" width="50"></td>
+                        <td>
+                            <!-- Edit Button -->
+                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal{{ product.id }}">Edit</button>
+
+                            <!-- Delete Form -->
+                            <form action="{{ url_for('delete_product', product_id=product.id) }}" method="POST" style="display:inline-block;">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ product.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel{{ product.id }}">Edit Product</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ url_for('edit_product', product_id=product.id) }}" method="POST">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="sr">Serial Number</label>
+                                            <input type="number" class="form-control" name="sr" value="{{ product.sr }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="name">Product Name</label>
+                                            <input type="text" class="form-control" name="name" value="{{ product.name }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Price</label>
+                                            <input type="number" class="form-control" name="price" value="{{ product.price }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="discount">Discount</label>
+                                            <input type="text" class="form-control" name="discount" value="{{ product.discount }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="count">Count</label>
+                                            <input type="text" class="form-control" name="count" value="{{ product.count }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="brand">Brand</label>
+                                            <input type="text" class="form-control" name="brand" value="{{ product.brand }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="image">Image URL</label>
+                                            <input type="text" class="form-control" name="image" value="{{ product.image }}">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
